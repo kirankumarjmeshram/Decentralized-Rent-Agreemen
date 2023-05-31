@@ -12,9 +12,6 @@ contract RentAgreement {
 
     Agreement public rentAgreement;
 
-    event RentAgreementCreated(address indexed tenant, address indexed landlord, uint256 rentAmount, uint256 duration);
-    event RentPaid(address indexed tenant, uint256 amount);
-    event RentAgreementEnded();
 
     modifier onlyTenant() {
         require(msg.sender == rentAgreement.tenant, "Only tenant can call this function.");
@@ -45,17 +42,13 @@ contract RentAgreement {
             startTime: block.timestamp,
             isActive: true
         });
-
-        emit RentAgreementCreated(_tenant, _landlord, _rentAmount, _duration);
     }
 
     function payRent() external payable onlyTenant isActiveAgreement {
         require(msg.value == rentAgreement.rentAmount, "Incorrect rent amount.");
-        emit RentPaid(msg.sender, msg.value);
     }
 
     function endAgreement() external onlyLandlord isActiveAgreement {
         rentAgreement.isActive = false;
-        emit RentAgreementEnded();
     }
 }
